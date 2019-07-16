@@ -1,20 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BlogController!{% endblock %}
+{% block title %}Quack index{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>It works {{ controller_name }}! ✅</h1>
+    <div class="container">
+        <h1>Index</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/Utilisateur/Desktop/symphony/Quack/src/Controller/QuackController.phpp'|file_link(0) }}">src/Controller/BlogController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/Utilisateur/Desktop/symphony/Quack/templates/quack/index.html.twig'|file_link(0) }}">templates/blog/index.html.twig</a></code></li>
-    </ul>
-</div>
+        <button type="button" class="btn btn-dark btn-lg">
+            <a href="{{ path('quack_new') }}">Create new</a>
+        </button>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Content</th>
+                <th>Created_at</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for quack in quacks %}
+                <tr>
+                    <td>{{ quack.id }}</td>
+                    <td>{{ quack.content }}</td>
+                    <td>{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>
+                        <div data-toggle="buttons">
+                            <button type="button" class="btn btn-outline-secondary">
+                                <a href="{{ path('quack_show', {'id': quack.id}) }}">show</a>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>
+                            </button>
+                            {{ include('quack/_delete_form.html.twig') }}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 {% endblock %}
