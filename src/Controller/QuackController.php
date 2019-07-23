@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Quack;
+
 use App\Form\QuackType;
 use App\Repository\QuackRepository;
+use App\Repository\TagsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Service\FileUploader;
 
 /**
  * @Route("/quack")
@@ -21,20 +25,36 @@ class QuackController extends AbstractController
     public function index(QuackRepository $quackRepository): Response
     {
         return $this->render('quack/index.html.twig', [
-            'quacks' => $quackRepository->findAll(),
+            'quacks' => $quackRepository->findBy(["parent"=>null]),
         ]);
     }
 
     /**
      * @Route("/new", name="quack_new", methods={"GET","POST"})
+     * @Route("/{parent}/new", name="quack_new_comment", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, FileUploader $fileUploader, ?Quack $parent)
     {
         $quack = new Quack();
         $form = $this->createForm(QuackType::class, $quack);
+
+        if($parent){
+            $quack->setParent($parent);
+            $form->remove("tag");
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $quack->setAuteur($this->getUser());
+
+            /** @var UploadedFile $photoFile */
+            $photoFile = $form['photo']->getData();
+            if ($photoFile) {
+                $photoFileName = $fileUploader->upload($photoFile);
+                $quack->setPhoto($photoFileName);
+            }
+            $quack->setCreatedAt(new \DateTime("now"));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($quack);
             $entityManager->flush();
@@ -45,6 +65,7 @@ class QuackController extends AbstractController
         return $this->render('quack/new.html.twig', [
             'quack' => $quack,
             'form' => $form->createView(),
+
         ]);
     }
 
@@ -83,6 +104,9 @@ class QuackController extends AbstractController
      */
     public function delete(Request $request, Quack $quack): Response
     {
+        $this->denyAccessUnlessGranted('delete', $quack);
+
+
         if ($this->isCsrfTokenValid('delete'.$quack->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($quack);

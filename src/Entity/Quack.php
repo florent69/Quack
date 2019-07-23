@@ -44,9 +44,21 @@ class Quack
      */
     private $Tag;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Quack", inversedBy="children")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="id")
+     */
+    private $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Quack", mappedBy="parent", orphanRemoval=true)
+     */
+    private $children;
+
     public function __construct()
     {
         $this->Tag = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,12 +102,12 @@ class Quack
         return $this;
     }
 
-    public function getPhoto(): ?string
+    public function getPhoto()
     {
         return $this->Photo;
     }
 
-    public function setPhoto(?string $Photo): self
+    public function setPhoto($Photo)
     {
         $this->Photo = $Photo;
 
@@ -123,6 +135,49 @@ class Quack
     {
         if ($this->Tag->contains($tag)) {
             $this->Tag->removeElement($tag);
+        }
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(self $child): self
+    {
+        if ($this->children->contains($child)) {
+            $this->children->removeElement($child);
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
         }
 
         return $this;

@@ -58,6 +58,11 @@ class User implements UserInterface
      */
     private $quacks;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $Photo;
+
     public function __construct()
     {
         $this->quacks = new ArrayCollection();
@@ -85,7 +90,8 @@ class User implements UserInterface
      *
      * @see UserInterface
      */
-    public function getUsername(): string
+    public function getUsername
+    (): string
     {
         return (string) $this->email;
     }
@@ -204,6 +210,18 @@ class User implements UserInterface
                 $quack->setAuteur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->Photo;
+    }
+
+    public function setPhoto(?string $Photo): self
+    {
+        $this->Photo = $Photo;
 
         return $this;
     }
