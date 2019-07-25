@@ -3,14 +3,14 @@
 {% block title %}Quack index{% endblock %}
 
 {% block body %}
-<th class="container ">
+<div class="container ">
     <h1>Index</h1>
 
     <button type="button" class="btn btn-dark btn-lg">
         <a href="{{ path('quack_new') }}">New Coincoin</a>
     </button>
-
-    <table class="table">
+    <br><br>
+    <table class="table table-dark">
         <thead>
         <tr>
             <th>Auteur</th>
@@ -26,14 +26,14 @@
         {% for quack in quacks %}
             <tr>
                 <td>
+                    <div>
+                        {{ quack.auteur.duckname }}
+                    </div>
                     {% if quack.auteur.photo %}
 
                         <img src="/photos/{{ quack.auteur.photo }}" class="img-fluid img-thumbnail" style="width:10em">
 
                     {% endif %}
-                    <div>
-                        {{ quack.auteur.duckname }}
-                    </div>
                 </td>
                 <td>{{ quack.content }}</td>
                 <td>

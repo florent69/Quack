@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  * @UniqueEntity(fields={"duckname"}, message="There is already an account with this duckname")
  */
-class User implements UserInterface
+class User implements UserInterface, JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -224,5 +225,33 @@ class User implements UserInterface
         $this->Photo = $Photo;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'roles' => $this->roles,
+            'password' => $this->password,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'duckname' => $this->duckname,
+            'quacks' => $this->quacks,
+            'photo' => $this->Photo,
+        ];
+
+    }
+
+    public function jsonSerializeNewUser()
+    {
+        return [
+            'email' => $this->email,
+            'password' => $this->password,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'duckname' => $this->duckname,
+        ];
+
     }
 }

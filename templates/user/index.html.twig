@@ -3,38 +3,42 @@
 {% block title %}User index{% endblock %}
 
 {% block body %}
+    <div class="container">
     <h1>User index</h1>
 
     <table class="table">
         <thead>
         <tr>
-            <th>Id</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th>Id</th>
             <th>Email</th>
             <th>Roles</th>
             <th>Password</th>
+            {% endif %}
+            <th>Photo</th>
+            <th>Duckname</th>
             <th>Firstname</th>
             <th>Lastname</th>
-            <th>Duckname</th>
-            <th>Photo</th>
             <th>actions</th>
         </tr>
         </thead>
         <tbody>
         {% for user in users %}
             <tr>
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ user.id }}</td>
-
                 <td>{{ user.email }}</td>
                 <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
                 <td>{{ user.password }}</td>
-                <td>{{ user.firstname }}</td>
-                <td>{{ user.lastname }}</td>
-                <td>{{ user.duckname }}</td>
+                {% endif %}
                 <td>
                     {% if user.photo != null %}
                         <img src="/photos/{{ user.photo }}" class="img-fluid img-thumbnail" style="width:7%">
                     {% endif %}
                 </td>
+                <td>{{ user.duckname }}</td>
+                <td>{{ user.firstname }}</td>
+                <td>{{ user.lastname }}</td>
                 <td>
                     <button>
                         <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
@@ -59,5 +63,5 @@
             <a href="{{ path('user_new') }}">Create new</a>
         </button>
     {% endif %}
-
+    </div>
 {% endblock %}

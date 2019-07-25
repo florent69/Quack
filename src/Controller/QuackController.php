@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Quack;
-
 use App\Form\QuackType;
 use App\Repository\QuackRepository;
 use App\Repository\TagsRepository;
@@ -40,19 +39,20 @@ class QuackController extends AbstractController
 
         if($parent){
             $quack->setParent($parent);
-            $form->remove("tag");
+            $form->remove("tag")->remove("photo");
         }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $quack->setAuteur($this->getUser());
 
+            if(!$parent){
             /** @var UploadedFile $photoFile */
             $photoFile = $form['photo']->getData();
             if ($photoFile) {
                 $photoFileName = $fileUploader->upload($photoFile);
                 $quack->setPhoto($photoFileName);
-            }
+            }}
             $quack->setCreatedAt(new \DateTime("now"));
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -105,7 +105,6 @@ class QuackController extends AbstractController
     public function delete(Request $request, Quack $quack): Response
     {
         $this->denyAccessUnlessGranted('delete', $quack);
-
 
         if ($this->isCsrfTokenValid('delete'.$quack->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
