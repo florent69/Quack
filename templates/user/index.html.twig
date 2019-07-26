@@ -10,15 +10,19 @@
         <thead>
         <tr>
             {% if is_granted('ROLE_ADMIN') %}
-                <th>Id</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Password</th>
+            <th>Id</th>
             {% endif %}
             <th>Photo</th>
             <th>Duckname</th>
             <th>Firstname</th>
             <th>Lastname</th>
+            {% if is_granted('ROLE_ADMIN') %}
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Password</th>
+            {% endif %}
+
+
             <th>actions</th>
         </tr>
         </thead>
@@ -27,18 +31,23 @@
             <tr>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
                 {% endif %}
                 <td>
                     {% if user.photo != null %}
-                        <img src="/photos/{{ user.photo }}" class="img-fluid img-thumbnail" style="width:7%">
+                        <img src="/photos/{{ user.photo }}" class="img-fluid img-thumbnail">
                     {% endif %}
                 </td>
                 <td>{{ user.duckname }}</td>
                 <td>{{ user.firstname }}</td>
                 <td>{{ user.lastname }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>{{ user.password }}</td>
+                {% endif %}
+
+
+
                 <td>
                     <button>
                         <a href="{{ path('user_show', {'id': user.id}) }}">show</a>

@@ -68,6 +68,15 @@ class QuackController extends AbstractController
 
         ]);
     }
+    /**
+     * @Route("/search", name="quack_search", methods={"GET"})
+     */
+    public function searchResult(Request $request, QuackRepository $quackRepository): Response
+    {
+        return $this->render('quack/index.html.twig', [
+            'quacks' => $quackRepository->findBySearchBar($request->query->get('mysearch')),
+        ]);
+    }
 
     /**
      * @Route("/{id}", name="quack_show", methods={"GET"})

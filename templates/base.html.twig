@@ -43,7 +43,15 @@
             </ul>
         </div>
     {% endif %}
+
     <div class="navbar navbar-right">
+        <div class="navbar-collapse collapse dual-nav w-50 order-2">
+            <form class="form-inline my-2 my-lg-0 ml-auto" method="get" action="{{ path('quack_search') }}">
+                <input class="form-control mr-sm-2" type="search" name="mysearch" placeholder="Search"
+                       aria-label="Search">
+                <button class="btn btn-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
         <ul class="navbar-nav mr-auto">
             {% if app.user %}
                 <li class="nav-item">
